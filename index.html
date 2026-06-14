@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UBS / UBC adatlap</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f5f5f3;--surface:#fff;--surface2:#f1efe8;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --text:#1a1a18;--text2:#5f5e5a;
+  --accent:#185FA5;--accent-light:#E6F1FB;
+  --input-bg:#f1efe8;--section-bg:#185FA5;--section-color:#E6F1FB;
+  --danger:#A32D2D;--danger-border:#F09595;--danger-light:#FCEBEB;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body.dark{
+  --bg:#1a1a18;--surface:#26261f;--surface2:#2c2c2a;
+  --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.18);
+  --text:#f1efe8;--text2:#b4b2a9;
+  --accent:#378ADD;--accent-light:#042C53;
+  --input-bg:#2c2c2a;--section-bg:#0C447C;--section-color:#B5D4F4;
+  --danger:#F09595;--danger-border:#A32D2D;--danger-light:#2a1010;
+}
+.wrap{padding:1rem;max-width:520px;margin:0 auto;}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;padding-top:.5rem;}
+.header h1{font-size:18px;font-weight:600;color:var(--text);flex:1;}
+.toggle-btn{background:var(--surface2);border:.5px solid var(--border2);border-radius:50px;padding:7px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);}
+.toggle-btn:active{transform:scale(0.96);}
+.name-card{background:var(--surface);border:.5px solid var(--border);border-radius:12px;margin-bottom:1rem;overflow:hidden;}
+.name-title{background:var(--section-bg);color:var(--section-color);font-size:14px;font-weight:600;padding:10px 16px;}
+.name-body{padding:12px 16px;}
+.name-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.name-select{flex:1;font-size:14px;color:var(--text);background:var(--input-bg);border:.5px solid var(--border2);border-radius:8px;padding:8px 10px;outline:none;}
+.name-select:focus{border-color:var(--accent);}
+.divider{height:.5px;background:var(--border);margin:12px 0;}
+.edit-title{font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;}
+.add-row{display:flex;gap:8px;margin-bottom:10px;}
+.add-input{flex:1;font-size:14px;color:var(--text);background:var(--input-bg);border:.5px solid var(--border2);border-radius:8px;padding:7px 10px;outline:none;}
+.add-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,95,165,.15);}
+.btn-sm{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:.5px solid var(--border2);background:var(--surface);color:var(--text);display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-sm:active{transform:scale(0.97);}
+.btn-add{background:var(--accent);color:var(--accent-light);border-color:var(--accent);}
+.name-list{display:flex;flex-direction:column;gap:6px;}
+.name-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--input-bg);border-radius:8px;font-size:14px;color:var(--text);}
+.btn-del{background:none;border:none;cursor:pointer;color:var(--danger);font-size:18px;padding:0 4px;line-height:1;}
+.date-row{display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap;}
+.date-row label{font-size:13px;color:var(--text2);}
+.date-row input,.date-row select{font-size:13px;background:var(--input-bg);border:.5px solid var(--border2);border-radius:8px;padding:6px 10px;color:var(--text);outline:none;}
+.section-card{background:var(--surface);border:.5px solid var(--border);border-radius:12px;margin-bottom:1rem;overflow:hidden;}
+.section-title{background:var(--section-bg);color:var(--section-color);font-size:14px;font-weight:600;padding:10px 16px;}
+.field-row{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:.5px solid var(--border);}
+.field-row:last-child{border-bottom:none;}
+.field-label{font-size:14px;color:var(--text2);flex:1;}
+.field-input{width:115px;font-size:14px;color:var(--text);background:var(--input-bg);border:.5px solid var(--border2);border-radius:8px;padding:6px 10px;text-align:right;outline:none;flex-shrink:0;}
+.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,95,165,.15);}
+.actions{display:flex;gap:10px;margin-top:1.25rem;padding-bottom:1rem;}
+.btn{flex:1;padding:12px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;border:.5px solid var(--border2);background:var(--surface);color:var(--text);display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn:active{transform:scale(0.97);}
+.btn-primary{background:var(--accent);color:var(--accent-light);border-color:var(--accent);}
+.btn-danger{color:var(--danger);border-color:var(--danger-border);}
+.btn-danger:active{background:var(--danger-light);}
+.footer{text-align:center;font-size:12px;color:var(--text2);padding:1rem 0 1.5rem;border-top:.5px solid var(--border);margin-top:.5rem;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--accent-light);padding:10px 24px;border-radius:50px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;z-index:99;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <span style="font-size:22px;">📋</span>
+    <h1>UBS / UBC adatlap</h1>
+    <button class="toggle-btn" onclick="toggleDark()" id="modeBtn">
+      <span id="modeIcon">🌙</span>
+      <span id="modeLabel">Sötét</span>
+    </button>
+  </div>
+
+  <div class="name-card">
+    <div class="name-title">👤 Technikus neve</div>
+    <div class="name-body">
+      <div class="name-row">
+        <select class="name-select" id="nameSelect">
+          <option value="">— Válassz nevet —</option>
+        </select>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-title">Névlista szerkesztése</div>
+      <div class="add-row">
+        <input class="add-input" id="newNameInput" type="text" placeholder="Új név beírása..." />
+        <button class="btn-sm btn-add" onclick="addName()">+ Hozzáad</button>
+      </div>
+      <div class="name-list" id="nameList"></div>
+    </div>
+  </div>
+
+  <div class="date-row">
+    <label>Dátum:</label>
+    <input type="date" id="datum" />
+    <label>Műszak:</label>
+    <select id="muszak">
+      <option>Délelőtt</option>
+      <option>Délután</option>
+      <option>Éjszaka</option>
+    </select>
+  </div>
+
+  <div id="form-root"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="mentes()">⬇ Mentés</button>
+    <button class="btn btn-danger" onclick="torol()">✕ Törlés</button>
+  </div>
+
+  <div class="footer">Fejlesztette: Nagy Zsolt TH-352</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const sections=[
+  {title:"UBS 1",fields:["Anyagnyomás","Hőmérséklet","RAM A mennyisége","RAM B mennyisége","Szűrő előtti nyomás","Szűrő utáni nyomás","RAM A nyomás","RAM B nyomás"]},
+  {title:"UBS 2",fields:["Anyagnyomás","Hőmérséklet","RAM A mennyisége","RAM B mennyisége","Szűrő előtti nyomás","Szűrő utáni nyomás","RAM A nyomás","RAM B nyomás"]},
+  {title:"UBC",fields:["Anyagnyomás","Hőmérséklet","RAM A mennyisége","RAM B mennyisége","Szűrő előtti nyomás","Szűrő utáni nyomás","RAM A nyomás","RAM B nyomás"]}
+];
+
+const root=document.getElementById('form-root');
+sections.forEach((sec,si)=>{
+  const card=document.createElement('div');
+  card.className='section-card';
+  const t=document.createElement('div');
+  t.className='section-title';
+  t.textContent=sec.title;
+  card.appendChild(t);
+  sec.fields.forEach((f,fi)=>{
+    const row=document.createElement('div');
+    row.className='field-row';
+    const label=document.createElement('span');
+    label.className='field-label';
+    label.textContent=f+':';
+    const input=document.createElement('input');
+    input.className='field-input';
+    input.type='text';
+    input.inputMode='decimal';
+    input.placeholder='—';
+    input.id='s'+si+'_f'+fi;
+    row.appendChild(label);
+    row.appendChild(input);
+    card.appendChild(row);
+  });
+  root.appendChild(card);
+});
+
+document.getElementById('datum').value=new Date().toISOString().split('T')[0];
+
+let names=JSON.parse(localStorage.getItem('ubsNames')||'[]');
+if(names.length===0) names=["Kovács János","Nagy Péter","Szabó Gábor"];
+
+function saveNames(){localStorage.setItem('ubsNames',JSON.stringify(names));}
+
+function renderNames(){
+  const sel=document.getElementById('nameSelect');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Válassz nevet —</option>';
+  names.forEach(function(n){
+    const o=document.createElement('option');
+    o.value=n;o.textContent=n;
+    if(n===cur)o.selected=true;
+    sel.appendChild(o);
+  });
+  const list=document.getElementById('nameList');
+  list.innerHTML='';
+  names.forEach(function(n,i){
+    const item=document.createElement('div');
+    item.className='name-item';
+    item.innerHTML='<span>'+n+'</span><button class="btn-del" onclick="deleteName('+i+')" title="Törlés">✕</button>';
+    list.appendChild(item);
+  });
+}
+
+function addName(){
+  const inp=document.getElementById('newNameInput');
+  const val=inp.value.trim();
+  if(!val){showToast('Írj be egy nevet!');return;}
+  if(names.includes(val)){showToast('Ez a név már szerepel!');return;}
+  names.push(val);
+  saveNames();
+  renderNames();
+  document.getElementById('nameSelect').value=val;
+  inp.value='';
+  showToast('Név hozzáadva ✓');
+}
+
+function deleteName(i){
+  names.splice(i,1);
+  saveNames();
+  renderNames();
+  showToast('Név törölve');
+}
+
+document.getElementById('newNameInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter') addName();
+});
+
+renderNames();
+
+let dark=false;
+function toggleDark(){
+  dark=!dark;
+  document.body.classList.toggle('dark',dark);
+  document.getElementById('modeIcon').textContent=dark?'☀️':'🌙';
+  document.getElementById('modeLabel').textContent=dark?'Világos':'Sötét';
+  localStorage.setItem('darkMode',dark?'1':'0');
+}
+if(localStorage.getItem('darkMode')==='1') toggleDark();
+
+function mentes(){
+  const datum=document.getElementById('datum').value;
+  const muszak=document.getElementById('muszak').value;
+  const nev=document.getElementById('nameSelect').value||'—';
+  let txt='UBS/UBC adatlap\n';
+  txt+='Dátum: '+datum+'   Műszak: '+muszak+'   Technikus: '+nev+'\n';
+  txt+='═'.repeat(42)+'\n';
+  sections.forEach(function(sec,si){
+    txt+='\n'+sec.title+'\n'+'─'.repeat(30)+'\n';
+    sec.fields.forEach(function(f,fi){
+      const val=document.getElementById('s'+si+'_f'+fi).value.trim()||'—';
+      txt+='  '+f+': '+val+'\n';
+    });
+  });
+  txt+='\nFejlesztette: Nagy Zsolt TH-352';
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='adatlap_'+datum+'_'+muszak+'_'+nev+'.txt';
+  a.click();URL.revokeObjectURL(url);
+  showToast('Mentve! ✓');
+}
+
+function torol(){
+  sections.forEach(function(sec,si){sec.fields.forEach(function(_,fi){
+    document.getElementById('s'+si+'_f'+fi).value='';
+  });});
+  document.getElementById('nameSelect').value='';
+  showToast('Mezők törölve');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2200);
+}
+</script>
+
+</body>
+</html>
